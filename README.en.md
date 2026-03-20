@@ -4,6 +4,8 @@
 
 Vertical Japanese numeral formatting — Arabic numerals to Kanji numerals, with TCY (tate-chu-yoko) and HTML support.
 
+![kandachi vertical writing demo](thumbnail.png)
+
 ## Install
 
 ```bash
