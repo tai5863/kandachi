@@ -1,46 +1,46 @@
 # kandachi
 
-[日本語](README.ja.md)
+[English](README.en.md)
 
-Vertical Japanese numeral formatting — Arabic numerals to Kanji numerals, with TCY (tate-chu-yoko) and HTML support.
+縦書き日本語数字フォーマッティング — アラビア数字を漢数字に変換。縦中横(TCY)・HTML処理対応。
 
-## Install
+## インストール
 
 ```bash
 npm install kandachi
 ```
 
-## Usage
+## 使い方
 
 ```js
 import { format, toKanji, Kandachi } from 'kandachi';
 
-// Convert numbers in text to Kanji numerals
+// テキスト内の数字を漢数字に変換
 format('12500円');                          // → '一万二千五百円'
 format('2026年3月20日', { mode: 'positional' }); // → '二〇二六年三月二〇日'
 
-// Convert a number directly
+// 数値を直接変換
 toKanji(12500);              // → '一万二千五百'
 toKanji(12500, 'formal');    // → '壱萬弐仟伍佰'
 
-// Class API for reusing options
+// クラスAPIで設定を再利用
 const k = new Kandachi({ mode: 'positional' });
 k.format('2026年');  // → '二〇二六年'
 k.toKanji(42);       // → '四二'
 ```
 
-## Conversion Modes
+## 変換モード
 
-| Mode | Example | Description |
-|------|---------|-------------|
-| `standard` | `12500` → `一万二千五百` | Positional Kanji with units (default) |
-| `positional` | `2026` → `二〇二六` | Digit-by-digit — for years, phone numbers |
-| `formal` | `12500` → `壱萬弐仟伍佰` | Daiji (formal) — for contracts, receipts |
-| `simple` | `1234` → `一二三四` | Simple digit replacement |
+| モード | 例 | 説明 |
+|--------|-----|------|
+| `standard` | `12500` → `一万二千五百` | 位取り漢数字（デフォルト） |
+| `positional` | `2026` → `二〇二六` | 桁並び — 年号・電話番号向け |
+| `formal` | `12500` → `壱萬弐仟伍佰` | 大字 — 契約書・領収書向け |
+| `simple` | `1234` → `一二三四` | 各桁を単純置換 |
 
-## TCY (Tate-Chu-Yoko)
+## 縦中横 (TCY)
 
-Wraps numbers with 2 or fewer digits in `<span class="tcy">` for horizontal-in-vertical typesetting with CSS `text-combine-upright: all`.
+2桁以下の数字を `<span class="tcy">` でラップし、CSS `text-combine-upright: all` と組み合わせて縦書き内で横組み表示する。
 
 ```js
 format('12月25日', { tcy: true });
@@ -51,31 +51,31 @@ format('12月25日', { tcy: true });
 .tcy { text-combine-upright: all; }
 ```
 
-Options:
+オプション:
 
 ```js
 format('12月25日', {
   tcy: {
     enabled: true,
-    maxDigits: 2,     // Max digits for TCY (default: 2)
-    className: 'tcy', // CSS class name (default: 'tcy')
-    tag: 'span',      // HTML tag (default: 'span')
+    maxDigits: 2,    // TCY適用の最大桁数 (デフォルト: 2)
+    className: 'tcy', // CSSクラス名 (デフォルト: 'tcy')
+    tag: 'span',      // HTMLタグ (デフォルト: 'span')
   }
 });
 ```
 
-## HTML Processing
+## HTML処理
 
-Converts numbers in text nodes only, leaving HTML tags untouched.
+HTMLタグを壊さずにテキストノード内の数字だけを変換する。
 
 ```js
 import { formatHTML, applyToElement } from 'kandachi';
 
-// String-based (no DOM required, SSR-friendly)
+// 文字列ベース (DOM不要、SSR向け)
 formatHTML('<p>2026年</p>', { mode: 'positional' });
 // → '<p>二〇二六年</p>'
 
-// DOM-based (browser)
+// DOMベース (ブラウザ向け)
 applyToElement(document.querySelector('.vertical'), { mode: 'standard' });
 ```
 
@@ -99,12 +99,12 @@ applyToElement(document.querySelector('.vertical'), { mode: 'standard' });
 <!-- → <span class="tcy">12</span>月<span class="tcy">25</span>日 -->
 ```
 
-| Attribute | Description |
-|-----------|-------------|
+| 属性 | 説明 |
+|------|------|
 | `mode` | `standard` \| `positional` \| `formal` \| `simple` |
-| `tcy` | Enable tate-chu-yoko |
-| `tcy-max` | Max digits for TCY (default: `2`) |
-| `tcy-class` | CSS class for TCY (default: `tcy`) |
+| `tcy` | 縦中横を有効化 |
+| `tcy-max` | TCY最大桁数 (デフォルト: `2`) |
+| `tcy-class` | TCYクラス名 (デフォルト: `tcy`) |
 
 ## CLI
 
@@ -126,52 +126,52 @@ npx kandachi -t "12月25日"
 
 ### `format(text, options?)`
 
-Converts numbers in text to Kanji numerals.
+テキスト内の数字を漢数字に変換する。
 
 ### `toKanji(num, mode?)`
 
-Converts a number to a Kanji numeral string.
+数値を漢数字文字列に変換する。
 
 ### `formatHTML(html, options?)`
 
-Converts numbers in text nodes while preserving HTML tags. No DOM required.
+HTMLタグを保持しつつテキストノード内の数字を変換する。DOM不要。
 
 ### `applyToElement(element, options?)`
 
-Converts text nodes within a DOM element in-place. Browser only.
+DOM要素内のテキストノードを直接変換する。ブラウザ専用。
 
 ### `wrapTcy(text, options)`
 
-Wraps a string in a TCY HTML tag.
+文字列をTCYタグでラップする。
 
 ### `new Kandachi(options?)`
 
-Class API for reusing options. Provides `format()` and `toKanji()` methods.
+設定を再利用するためのクラスAPI。`format()` と `toKanji()` メソッドを持つ。
 
-### Options
+### オプション
 
 ```ts
 interface KandachiOptions {
   mode: 'standard' | 'positional' | 'formal' | 'simple';
   tcy: boolean | Partial<TcyOptions>;
-  handleComma: boolean;   // Handle comma-separated numbers (default: true)
-  handleDecimal: boolean; // Handle decimal points (default: true)
+  handleComma: boolean;   // カンマ区切り対応 (デフォルト: true)
+  handleDecimal: boolean; // 小数点対応 (デフォルト: true)
 }
 ```
 
-## Supported Range
+## 対応範囲
 
-- Integers: `0` to `10^23` (垓 / gai)
-- Decimals: supported (`3.14` → `三・一四`)
-- Comma-separated: supported (`1,000,000` → `百万`)
+- 整数: `0` から `10^23`（垓）まで
+- 小数: 対応 (`3.14` → `三・一四`)
+- カンマ区切り: 対応 (`1,000,000` → `百万`)
 
-## Bundle Size
+## バンドルサイズ
 
-| Entry | Size (minified + brotli) |
-|-------|--------------------------|
+| エントリ | サイズ (minified + brotli) |
+|----------|---------------------------|
 | `kandachi` | ~1.2 KB |
 | `kandachi/webcomponent` | ~1.3 KB |
 
-## License
+## ライセンス
 
 [MIT](LICENSE)
