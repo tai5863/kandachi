@@ -272,6 +272,32 @@
     }
     footer a:hover { border-color: var(--color-text); }
 
+    /* BudouX demo */
+    .budoux-demo {
+      display: flex;
+      gap: 2rem;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+    }
+    .budoux-col { text-align: center; }
+    .budoux-label {
+      font-family: monospace;
+      font-size: 0.75rem;
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.75rem;
+    }
+    .budoux-code pre {
+      background: var(--color-accent);
+      color: #e0e0e0;
+      padding: 1.25rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      line-height: 1.6;
+      overflow-x: auto;
+    }
+
     @media (max-width: 768px) {
       .hero { padding: 3rem 1.5rem 2rem; }
       .hero h1 { font-size: 1.8rem; }
@@ -280,6 +306,7 @@
       .mode-grid { grid-template-columns: 1fr 1fr; }
       .usecases { grid-template-columns: 1fr; }
       .vertical-showcase { flex-wrap: wrap; }
+      .budoux-demo { flex-wrap: wrap; }
     }
   </style>
   <script type="module" src="./dist/webcomponent.js"></script>
@@ -404,6 +431,31 @@
       </div>
     </section>
 
+    <!-- budoux integration -->
+    <section>
+      <h2>BudouX 連携</h2>
+      <p class="subtitle">kandachi × <a href="https://github.com/google/budoux" style="color: var(--color-text); border-bottom: 1px solid var(--color-border);">BudouX</a> — 漢数字変換 + 自然な改行位置で、本格的な縦書きWebを実現</p>
+      <div class="budoux-demo">
+        <div class="budoux-col">
+          <div class="budoux-label">kandachi only</div>
+          <div class="vertical-panel" id="budoux-kandachi-only"></div>
+        </div>
+        <div class="budoux-col">
+          <div class="budoux-label">kandachi + BudouX</div>
+          <div class="vertical-panel" id="budoux-combined"></div>
+        </div>
+      </div>
+      <div class="budoux-code">
+        <pre><code>import { format } from 'kandachi';
+import { loadDefaultJapaneseParser } from 'budoux';
+
+const parser = loadDefaultJapaneseParser();
+const text = format('2026年3月、参加者1500人の大会が開催された。');
+const html = parser.translateHTMLString(text);
+// → wbr タグで自然な改行位置を挿入</code></pre>
+      </div>
+    </section>
+
   </div>
 
   <footer>
@@ -447,6 +499,23 @@
     });
 
     update();
+
+    // BudouX integration demo
+    const budouxText = '令和8年3月20日、第42回全国縦書き大会が開催される。参加費は12500円。参加者は1500人を超え、会場の収容人数3000人の半数に達した。';
+    const kandachiOnly = document.getElementById('budoux-kandachi-only');
+    const combined = document.getElementById('budoux-combined');
+
+    // kandachi only
+    kandachiOnly.innerHTML = `<kandachi-ja tcy>${budouxText}</kandachi-ja>`;
+
+    // kandachi + budoux
+    import('https://esm.sh/budoux').then(async (mod) => {
+      const parser = mod.loadDefaultJapaneseParser();
+      const converted = format(budouxText, { tcy: true });
+      combined.innerHTML = parser.translateHTMLString(converted);
+    }).catch(() => {
+      combined.innerHTML = '<span style="font-size:0.85rem;color:var(--color-text-muted);">BudouX の読み込みに失敗しました</span>';
+    });
   </script>
 </body>
 </html>
