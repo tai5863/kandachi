@@ -63,6 +63,14 @@
   "engines": {
     "node": ">=16"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tai5863/kandachi.git"
+  },
+  "homepage": "https://github.com/tai5863/kandachi#readme",
+  "bugs": {
+    "url": "https://github.com/tai5863/kandachi/issues"
+  },
   "license": "MIT",
   "devDependencies": {
     "@biomejs/biome": "^1.9.0",
