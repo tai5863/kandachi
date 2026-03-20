@@ -1,6 +1,6 @@
 # kandachi
 
-[English](README.en.md)
+[English](README.en.md) ・ [Demo](https://tai5863.github.io/kandachi/)
 
 縦書き日本語数字フォーマッティング — アラビア数字を漢数字に変換。縦中横(TCY)・HTML処理対応。
 
@@ -171,6 +171,19 @@ interface KandachiOptions {
 |----------|---------------------------|
 | `kandachi` | ~1.2 KB |
 | `kandachi/webcomponent` | ~1.3 KB |
+
+## BudouX 連携
+
+[BudouX](https://github.com/google/budoux)（Googleの日本語改行最適化ライブラリ）と組み合わせることで、漢数字変換 + 自然な改行位置の本格的な縦書きWebを実現できる。
+
+```js
+import { format } from 'kandachi';
+import { loadDefaultJapaneseParser } from 'budoux';
+
+const parser = loadDefaultJapaneseParser();
+const text = format('2026年3月、参加者1500人の大会が開催された。');
+const html = parser.translateHTMLString(text);
+```
 
 ## ライセンス
 

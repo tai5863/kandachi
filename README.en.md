@@ -1,6 +1,6 @@
 # kandachi
 
-[日本語](README.md)
+[日本語](README.md) ・ [Demo](https://tai5863.github.io/kandachi/)
 
 Vertical Japanese numeral formatting — Arabic numerals to Kanji numerals, with TCY (tate-chu-yoko) and HTML support.
 
@@ -171,6 +171,19 @@ interface KandachiOptions {
 |-------|--------------------------|
 | `kandachi` | ~1.2 KB |
 | `kandachi/webcomponent` | ~1.3 KB |
+
+## BudouX Integration
+
+Combine with [BudouX](https://github.com/google/budoux) (Google's Japanese line break optimizer) for production-ready vertical Japanese web typography.
+
+```js
+import { format } from 'kandachi';
+import { loadDefaultJapaneseParser } from 'budoux';
+
+const parser = loadDefaultJapaneseParser();
+const text = format('2026年3月、参加者1500人の大会が開催された。');
+const html = parser.translateHTMLString(text);
+```
 
 ## License
 
