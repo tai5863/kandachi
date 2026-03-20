@@ -29,6 +29,14 @@
       line-height: 1.6;
     }
 
+    /* Font loading: show card backgrounds immediately, text after fonts load */
+    .vertical-panel { color: transparent; transition: color 0.2s; }
+    .vertical-panel > * { opacity: 0; transition: opacity 0.2s; }
+    .playground-output > * { opacity: 0; transition: opacity 0.2s; }
+    .fonts-ready .vertical-panel { color: var(--color-text); }
+    .fonts-ready .vertical-panel > * { opacity: 1; }
+    .fonts-ready .playground-output > * { opacity: 1; }
+
     /* Hero */
     .hero {
       text-align: center;
@@ -185,16 +193,16 @@
       margin-top: 0.5rem;
     }
 
-    /* Vertical showcase */
-    .vertical-showcase {
+    /* Vertical panels (shared by vertical showcase + budoux demo) */
+    .panel-row {
       display: flex;
       gap: 2rem;
       justify-content: center;
     }
-    .vertical-col {
+    .panel-col {
       text-align: center;
     }
-    .vertical-col-label {
+    .panel-label {
       font-family: monospace;
       font-size: 0.75rem;
       color: var(--color-text-muted);
@@ -258,6 +266,17 @@
       color: var(--color-text-muted);
     }
 
+    /* BudouX code block */
+    .budoux-code pre {
+      background: var(--color-accent);
+      color: #e0e0e0;
+      padding: 1.25rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      line-height: 1.6;
+      overflow-x: auto;
+    }
+
     /* Footer */
     footer {
       text-align: center;
@@ -272,32 +291,6 @@
     }
     footer a:hover { border-color: var(--color-text); }
 
-    /* BudouX demo */
-    .budoux-demo {
-      display: flex;
-      gap: 2rem;
-      justify-content: center;
-      margin-bottom: 1.5rem;
-    }
-    .budoux-col { text-align: center; }
-    .budoux-label {
-      font-family: monospace;
-      font-size: 0.75rem;
-      color: var(--color-text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      margin-bottom: 0.75rem;
-    }
-    .budoux-code pre {
-      background: var(--color-accent);
-      color: #e0e0e0;
-      padding: 1.25rem;
-      border-radius: 8px;
-      font-size: 0.85rem;
-      line-height: 1.6;
-      overflow-x: auto;
-    }
-
     @media (max-width: 768px) {
       .hero { padding: 3rem 1.5rem 2rem; }
       .hero h1 { font-size: 1.8rem; }
@@ -305,8 +298,7 @@
       .playground { grid-template-columns: 1fr; }
       .mode-grid { grid-template-columns: 1fr 1fr; }
       .usecases { grid-template-columns: 1fr; }
-      .vertical-showcase { flex-wrap: wrap; }
-      .budoux-demo { flex-wrap: wrap; }
+      .panel-row { flex-wrap: wrap; }
     }
   </style>
   <script type="module" src="./dist/webcomponent.js"></script>
@@ -377,21 +369,21 @@
     <section>
       <h2>縦書き表示</h2>
       <p class="subtitle">writing-mode: vertical-rl と組み合わせた実際の表示</p>
-      <div class="vertical-showcase">
-        <div class="vertical-col">
-          <div class="vertical-col-label">tcy (縦中横)</div>
+      <div class="panel-row">
+        <div class="panel-col">
+          <div class="panel-label">tcy (縦中横)</div>
           <div class="vertical-panel">
             <kandachi-ja tcy>令和8年3月20日、第42回全国大会が開催される。参加費は12500円。参加者は1500人を超え、会場の収容人数3000人の半数に達した。</kandachi-ja>
           </div>
         </div>
-        <div class="vertical-col">
-          <div class="vertical-col-label">standard</div>
+        <div class="panel-col">
+          <div class="panel-label">standard</div>
           <div class="vertical-panel">
             <kandachi-ja mode="standard">令和8年3月20日、第42回全国大会が開催される。参加費は12500円。参加者は1500人を超え、会場の収容人数3000人の半数に達した。</kandachi-ja>
           </div>
         </div>
-        <div class="vertical-col">
-          <div class="vertical-col-label">positional</div>
+        <div class="panel-col">
+          <div class="panel-label">positional</div>
           <div class="vertical-panel">
             <kandachi-ja mode="positional">令和8年3月20日、第42回全国大会が開催される。参加費は12500円。参加者は1500人を超え、会場の収容人数3000人の半数に達した。</kandachi-ja>
           </div>
@@ -431,18 +423,22 @@
       </div>
     </section>
 
-    <!-- budoux integration -->
+    <!-- BudouX integration -->
     <section>
       <h2>BudouX 連携</h2>
       <p class="subtitle">kandachi × <a href="https://github.com/google/budoux" style="color: var(--color-text); border-bottom: 1px solid var(--color-border);">BudouX</a> — 漢数字変換 + 自然な改行位置で、本格的な縦書きWebを実現</p>
-      <div class="budoux-demo">
-        <div class="budoux-col">
-          <div class="budoux-label">kandachi only</div>
-          <div class="vertical-panel" id="budoux-kandachi-only"></div>
+      <div class="panel-row" style="margin-bottom: 1.5rem;">
+        <div class="panel-col">
+          <div class="panel-label">kandachi only</div>
+          <div class="vertical-panel">
+            <kandachi-ja tcy>令和8年3月20日、第42回全国大会が開催される。参加費は12500円。参加者は1500人を超え、会場の収容人数3000人の半数に達した。</kandachi-ja>
+          </div>
         </div>
-        <div class="budoux-col">
-          <div class="budoux-label">kandachi + BudouX</div>
-          <div class="vertical-panel" id="budoux-combined"></div>
+        <div class="panel-col">
+          <div class="panel-label">kandachi + BudouX</div>
+          <div class="vertical-panel" id="budoux-combined">
+            <kandachi-ja tcy>令和8年3月20日、第42回全国大会が開催される。参加費は12500円。参加者は1500人を超え、会場の収容人数3000人の半数に達した。</kandachi-ja>
+          </div>
         </div>
       </div>
       <div class="budoux-code">
@@ -465,6 +461,10 @@ const html = parser.translateHTMLString(text);
   <script type="module">
     import { format } from './dist/index.js';
     import { toKanji } from './dist/index.js';
+
+    // Wait for fonts before rendering to prevent TCY layout shift
+    await document.fonts.ready;
+    document.body.classList.add('fonts-ready');
 
     // Mode comparison
     document.getElementById('mc-standard').textContent = toKanji(12500, 'standard');
@@ -500,21 +500,16 @@ const html = parser.translateHTMLString(text);
 
     update();
 
-    // BudouX integration demo
-    const budouxText = '令和8年3月20日、第42回全国縦書き大会が開催される。参加費は12500円。参加者は1500人を超え、会場の収容人数3000人の半数に達した。';
-    const kandachiOnly = document.getElementById('budoux-kandachi-only');
+    // BudouX integration demo - upgrade right panel when loaded
+    const budouxText = '令和8年3月20日、第42回全国大会が開催される。参加費は12500円。参加者は1500人を超え、会場の収容人数3000人の半数に達した。';
     const combined = document.getElementById('budoux-combined');
 
-    // kandachi only
-    kandachiOnly.innerHTML = `<kandachi-ja tcy>${budouxText}</kandachi-ja>`;
-
-    // kandachi + budoux
-    import('https://esm.sh/budoux').then(async (mod) => {
+    import('https://esm.sh/budoux').then((mod) => {
       const parser = mod.loadDefaultJapaneseParser();
       const converted = format(budouxText, { tcy: true });
       combined.innerHTML = parser.translateHTMLString(converted);
     }).catch(() => {
-      combined.innerHTML = '<span style="font-size:0.85rem;color:var(--color-text-muted);">BudouX の読み込みに失敗しました</span>';
+      // Keep kandachi-only output as fallback
     });
   </script>
 </body>
