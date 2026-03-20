@@ -35,6 +35,7 @@ jobs:
           mkdir _site
           cp demo.html _site/index.html
           cp -r dist _site/dist
+          cp ogp.png _site/ogp.png
 
       - uses: actions/configure-pages@v5
 
