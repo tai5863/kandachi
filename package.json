@@ -1,7 +1,7 @@
 {
   "name": "kandachi",
-  "version": "0.1.0",
-  "description": "縦書き日本語数字フォーマッティング — Vertical Japanese numeral formatting",
+  "version": "0.1.1",
+  "description": "Vertical Japanese numeral formatting — Arabic numerals to Kanji with TCY and HTML support",
   "type": "module",
   "exports": {
     ".": {
@@ -25,7 +25,7 @@
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "bin": {
-    "kandachi": "./dist/cli.js"
+    "kandachi": "dist/cli.js"
   },
   "files": [
     "dist"
