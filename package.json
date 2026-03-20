@@ -57,8 +57,16 @@
     "vertical-writing",
     "tategaki",
     "tcy",
+    "tate-chu-yoko",
+    "number-to-kanji",
+    "kansuji",
+    "web-component",
     "縦書き",
-    "漢数字"
+    "漢数字",
+    "縦中横",
+    "日本語",
+    "数字変換",
+    "大字"
   ],
   "engines": {
     "node": ">=16"
