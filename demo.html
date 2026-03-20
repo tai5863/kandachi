@@ -2,65 +2,451 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>kandachi</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>kandachi — Vertical Japanese Numeral Formatting</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
-    body { font-family: "Noto Serif JP", serif; font-size: 1.2rem; padding: 2rem; }
-    .vertical { writing-mode: vertical-rl; height: 400px; line-height: 2; font-size: 1.4rem; border: 1px solid #ccc; padding: 1rem; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --color-bg: #faf9f7;
+      --color-surface: #ffffff;
+      --color-text: #1a1a1a;
+      --color-text-muted: #6b6b6b;
+      --color-accent: #2d2d2d;
+      --color-border: #e5e2de;
+      --color-tag-bg: #f0eeeb;
+      --font-jp: "Noto Serif JP", "Yu Mincho", serif;
+      --font-ui: "Inter", -apple-system, sans-serif;
+    }
+
+    body {
+      font-family: var(--font-ui);
+      background: var(--color-bg);
+      color: var(--color-text);
+      line-height: 1.6;
+    }
+
+    /* Hero */
+    .hero {
+      text-align: center;
+      padding: 5rem 2rem 3rem;
+      border-bottom: 1px solid var(--color-border);
+    }
+    .hero h1 {
+      font-family: var(--font-jp);
+      font-size: 2.5rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+    }
+    .hero p {
+      margin-top: 0.75rem;
+      color: var(--color-text-muted);
+      font-size: 1.05rem;
+    }
+    .hero-install {
+      margin-top: 1.5rem;
+      display: inline-block;
+      background: var(--color-accent);
+      color: #fff;
+      font-family: monospace;
+      font-size: 0.95rem;
+      padding: 0.6rem 1.5rem;
+      border-radius: 6px;
+      user-select: all;
+    }
+
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    /* Section */
+    section {
+      padding: 3.5rem 0;
+      border-bottom: 1px solid var(--color-border);
+    }
+    section:last-of-type { border-bottom: none; }
+    section h2 {
+      font-family: var(--font-jp);
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 0.4rem;
+    }
+    section .subtitle {
+      color: var(--color-text-muted);
+      font-size: 0.9rem;
+      margin-bottom: 2rem;
+    }
+
+    /* Playground */
+    .playground {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      align-items: start;
+    }
+    .playground-input {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .playground-input textarea {
+      width: 100%;
+      min-height: 160px;
+      font-family: var(--font-jp);
+      font-size: 1.1rem;
+      line-height: 1.8;
+      padding: 1rem;
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      background: var(--color-surface);
+      resize: vertical;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .playground-input textarea:focus {
+      border-color: var(--color-accent);
+    }
+    .playground-controls {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .mode-btn {
+      font-family: var(--font-ui);
+      font-size: 0.8rem;
+      font-weight: 500;
+      padding: 0.4rem 0.9rem;
+      border: 1px solid var(--color-border);
+      border-radius: 100px;
+      background: var(--color-surface);
+      color: var(--color-text-muted);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .mode-btn:hover { border-color: var(--color-accent); color: var(--color-text); }
+    .mode-btn.active {
+      background: var(--color-accent);
+      color: #fff;
+      border-color: var(--color-accent);
+    }
+    .playground-output {
+      font-family: var(--font-jp);
+      font-size: 1.1rem;
+      line-height: 1.8;
+      padding: 1rem;
+      min-height: 160px;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    /* Mode comparison */
+    .mode-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+    }
+    .mode-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      padding: 1.25rem;
+    }
+    .mode-card-label {
+      font-family: monospace;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.75rem;
+    }
+    .mode-card-input {
+      font-family: var(--font-ui);
+      font-size: 0.85rem;
+      color: var(--color-text-muted);
+      margin-bottom: 0.25rem;
+    }
+    .mode-card-output {
+      font-family: var(--font-jp);
+      font-size: 1.3rem;
+      font-weight: 700;
+    }
+    .mode-card-desc {
+      font-size: 0.8rem;
+      color: var(--color-text-muted);
+      margin-top: 0.5rem;
+    }
+
+    /* Vertical showcase */
+    .vertical-showcase {
+      display: flex;
+      gap: 2rem;
+      justify-content: center;
+    }
+    .vertical-col {
+      text-align: center;
+    }
+    .vertical-col-label {
+      font-family: monospace;
+      font-size: 0.75rem;
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.75rem;
+    }
+    .vertical-panel {
+      writing-mode: vertical-rl;
+      font-family: var(--font-jp);
+      font-size: 1.15rem;
+      line-height: 2.2;
+      height: 420px;
+      padding: 1.5rem 1rem;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      text-align: start;
+    }
     .tcy { text-combine-upright: all; }
-    h2 { margin-top: 2rem; }
-    kandachi-ja { display: block; margin: 0.5rem 0; }
-    .row { display: flex; gap: 2rem; }
-    pre { background: #f5f5f5; padding: 1rem; border-radius: 4px; }
+
+    /* Use cases */
+    .usecases {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+    .usecase-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      padding: 1.5rem;
+    }
+    .usecase-card-tag {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--color-text-muted);
+      background: var(--color-tag-bg);
+      padding: 0.2rem 0.6rem;
+      border-radius: 100px;
+      margin-bottom: 0.75rem;
+    }
+    .usecase-card h3 {
+      font-family: var(--font-jp);
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+    }
+    .usecase-card-example {
+      font-family: var(--font-jp);
+      font-size: 1.1rem;
+      margin: 0.75rem 0;
+      padding: 0.75rem;
+      background: var(--color-tag-bg);
+      border-radius: 6px;
+    }
+    .usecase-card p {
+      font-size: 0.85rem;
+      color: var(--color-text-muted);
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 2.5rem 2rem;
+      color: var(--color-text-muted);
+      font-size: 0.85rem;
+    }
+    footer a {
+      color: var(--color-text);
+      text-decoration: none;
+      border-bottom: 1px solid var(--color-border);
+    }
+    footer a:hover { border-color: var(--color-text); }
+
+    @media (max-width: 768px) {
+      .hero { padding: 3rem 1.5rem 2rem; }
+      .hero h1 { font-size: 1.8rem; }
+      .container { padding: 0 1.5rem; }
+      .playground { grid-template-columns: 1fr; }
+      .mode-grid { grid-template-columns: 1fr 1fr; }
+      .usecases { grid-template-columns: 1fr; }
+      .vertical-showcase { flex-wrap: wrap; }
+    }
   </style>
   <script type="module" src="./dist/webcomponent.js"></script>
 </head>
 <body>
-  <h1>kandachi</h1>
 
-  <h2>Web Component — 各モード</h2>
-  <kandachi-ja mode="standard">2026年3月20日、人口は1億2500万人</kandachi-ja>
-  <kandachi-ja mode="positional">2026年3月20日</kandachi-ja>
-  <kandachi-ja mode="formal">12500円</kandachi-ja>
-  <kandachi-ja mode="simple">090-1234-5678</kandachi-ja>
+  <!-- Hero -->
+  <header class="hero">
+    <h1>kandachi</h1>
+    <p>Vertical Japanese numeral formatting</p>
+    <div class="hero-install">npm install kandachi</div>
+  </header>
 
-  <h2>縦中横 (TCY)</h2>
-  <kandachi-ja tcy>12月25日のクリスマス、気温は8度</kandachi-ja>
+  <div class="container">
 
-  <h2>縦書き表示</h2>
-  <div class="row">
-    <div>
-      <h3>TCY (縦中横)</h3>
-      <div class="vertical">
-        <kandachi-ja tcy>2026年3月20日、第42回大会が開催される。参加者は1500人を超えた。</kandachi-ja>
+    <!-- Playground -->
+    <section>
+      <h2>試す</h2>
+      <p class="subtitle">テキストを入力すると、リアルタイムで変換結果が表示されます</p>
+      <div class="playground">
+        <div class="playground-input">
+          <textarea id="pg-input">令和8年3月20日、第42回全国大会が開催される。参加費は12500円、参加者は1500人を超えた。</textarea>
+          <div class="playground-controls">
+            <button class="mode-btn active" data-mode="standard">standard</button>
+            <button class="mode-btn" data-mode="positional">positional</button>
+            <button class="mode-btn" data-mode="formal">formal</button>
+            <button class="mode-btn" data-mode="simple">simple</button>
+            <button class="mode-btn" data-mode="tcy">tcy</button>
+          </div>
+        </div>
+        <div class="playground-output" id="pg-output"></div>
       </div>
-    </div>
-    <div>
-      <h3>positional</h3>
-      <div class="vertical">
-        <kandachi-ja mode="positional">2026年3月20日、第42回大会が開催される。参加者は1500人を超えた。</kandachi-ja>
+    </section>
+
+    <!-- Mode comparison -->
+    <section>
+      <h2>変換モード</h2>
+      <p class="subtitle">用途に合わせて4つのモードから選択</p>
+      <div class="mode-grid">
+        <div class="mode-card">
+          <div class="mode-card-label">standard</div>
+          <div class="mode-card-input">12500</div>
+          <div class="mode-card-output" id="mc-standard"></div>
+          <div class="mode-card-desc">位取り漢数字。本文中の数値表記に。</div>
+        </div>
+        <div class="mode-card">
+          <div class="mode-card-label">positional</div>
+          <div class="mode-card-input">2026</div>
+          <div class="mode-card-output" id="mc-positional"></div>
+          <div class="mode-card-desc">桁並び。年号・電話番号・番地に。</div>
+        </div>
+        <div class="mode-card">
+          <div class="mode-card-label">formal</div>
+          <div class="mode-card-input">12500</div>
+          <div class="mode-card-output" id="mc-formal"></div>
+          <div class="mode-card-desc">大字。契約書・領収書・祝儀袋に。</div>
+        </div>
+        <div class="mode-card">
+          <div class="mode-card-label">simple</div>
+          <div class="mode-card-input">090-1234</div>
+          <div class="mode-card-output" id="mc-simple"></div>
+          <div class="mode-card-desc">単純置換。電話番号・コード類に。</div>
+        </div>
       </div>
-    </div>
-    <div>
-      <h3>standard</h3>
-      <div class="vertical">
-        <kandachi-ja mode="standard">2026年3月20日、第42回大会が開催される。参加者は1500人を超えた。</kandachi-ja>
+    </section>
+
+    <!-- Vertical writing -->
+    <section>
+      <h2>縦書き表示</h2>
+      <p class="subtitle">writing-mode: vertical-rl と組み合わせた実際の表示</p>
+      <div class="vertical-showcase">
+        <div class="vertical-col">
+          <div class="vertical-col-label">tcy (縦中横)</div>
+          <div class="vertical-panel">
+            <kandachi-ja tcy>令和8年3月20日、第42回全国大会が開催される。参加費は12500円。参加者は1500人を超え、会場の収容人数3000人の半数に達した。</kandachi-ja>
+          </div>
+        </div>
+        <div class="vertical-col">
+          <div class="vertical-col-label">standard</div>
+          <div class="vertical-panel">
+            <kandachi-ja mode="standard">令和8年3月20日、第42回全国大会が開催される。参加費は12500円。参加者は1500人を超え、会場の収容人数3000人の半数に達した。</kandachi-ja>
+          </div>
+        </div>
+        <div class="vertical-col">
+          <div class="vertical-col-label">positional</div>
+          <div class="vertical-panel">
+            <kandachi-ja mode="positional">令和8年3月20日、第42回全国大会が開催される。参加費は12500円。参加者は1500人を超え、会場の収容人数3000人の半数に達した。</kandachi-ja>
+          </div>
+        </div>
       </div>
-    </div>
+    </section>
+
+    <!-- Use cases -->
+    <section>
+      <h2>活用シーン</h2>
+      <p class="subtitle">プロフェッショナルの現場で</p>
+      <div class="usecases">
+        <div class="usecase-card">
+          <div class="usecase-card-tag">出版・組版</div>
+          <h3>書籍・雑誌の縦組み</h3>
+          <div class="usecase-card-example">
+            <kandachi-ja tcy>第12章 2026年の展望</kandachi-ja>
+          </div>
+          <p>TCYで2桁数字を横組みに。InDesign・Vivliostyleとの連携に。</p>
+        </div>
+        <div class="usecase-card">
+          <div class="usecase-card-tag">新聞・メディア</div>
+          <h3>記事本文の数字表記</h3>
+          <div class="usecase-card-example">
+            <kandachi-ja mode="standard">死者は230人、負傷者は1200人に上った。</kandachi-ja>
+          </div>
+          <p>新聞の縦書き記事における数字表記ルールに対応。</p>
+        </div>
+        <div class="usecase-card">
+          <div class="usecase-card-tag">法務・経理</div>
+          <h3>契約書・領収書</h3>
+          <div class="usecase-card-example">
+            <kandachi-ja mode="formal">金額: 1250000円</kandachi-ja>
+          </div>
+          <p>大字（壱・弐・参）による改竄防止の正式表記。</p>
+        </div>
+      </div>
+    </section>
+
   </div>
 
-  <h2>JS API デモ</h2>
-  <pre id="js-output"></pre>
+  <footer>
+    <a href="https://github.com/tai5863/kandachi">GitHub</a> ・ <a href="https://www.npmjs.com/package/kandachi">npm</a> ・ MIT License
+  </footer>
+
   <script type="module">
-    import { format, toKanji, Kandachi } from './dist/index.js';
-    const out = document.getElementById('js-output');
-    const lines = [
-      `format('12500円') → ${format('12500円')}`,
-      `format('2026年', { mode: 'positional' }) → ${format('2026年', { mode: 'positional' })}`,
-      `toKanji(12500) → ${toKanji(12500)}`,
-      `toKanji(12500, 'formal') → ${toKanji(12500, 'formal')}`,
-      `format('12月25日', { tcy: true }) → ${format('12月25日', { tcy: true })}`,
-    ];
-    out.textContent = lines.join('\n');
+    import { format } from './dist/index.js';
+    import { toKanji } from './dist/index.js';
+
+    // Mode comparison
+    document.getElementById('mc-standard').textContent = toKanji(12500, 'standard');
+    document.getElementById('mc-positional').textContent = toKanji(2026, 'positional');
+    document.getElementById('mc-formal').textContent = toKanji(12500, 'formal');
+    document.getElementById('mc-simple').textContent = format('090-1234', { mode: 'simple' });
+
+    // Playground
+    const input = document.getElementById('pg-input');
+    const output = document.getElementById('pg-output');
+    const buttons = document.querySelectorAll('.mode-btn');
+    let currentMode = 'standard';
+
+    function update() {
+      const text = input.value;
+      if (currentMode === 'tcy') {
+        output.innerHTML = format(text, { tcy: true });
+      } else {
+        output.textContent = format(text, { mode: currentMode });
+      }
+    }
+
+    input.addEventListener('input', update);
+
+    buttons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        buttons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentMode = btn.dataset.mode;
+        update();
+      });
+    });
+
+    update();
   </script>
 </body>
 </html>
