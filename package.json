@@ -71,6 +71,7 @@
   "bugs": {
     "url": "https://github.com/tai5863/kandachi/issues"
   },
+  "author": "tai5863",
   "license": "MIT",
   "devDependencies": {
     "@biomejs/biome": "^1.9.0",
