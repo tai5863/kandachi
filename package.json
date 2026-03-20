@@ -1,0 +1,76 @@
+{
+  "name": "kandachi",
+  "version": "0.1.0",
+  "description": "縦書き日本語数字フォーマッティング — Vertical Japanese numeral formatting",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    },
+    "./webcomponent": {
+      "import": {
+        "types": "./dist/webcomponent.d.ts",
+        "default": "./dist/webcomponent.js"
+      }
+    }
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "kandachi": "./dist/cli.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "lint": "biome check src/ tests/",
+    "lint:fix": "biome check --write src/ tests/",
+    "size": "size-limit",
+    "prepublishOnly": "npm run build && npm run size"
+  },
+  "size-limit": [
+    {
+      "path": "dist/index.js",
+      "limit": "3 KB"
+    },
+    {
+      "path": "dist/webcomponent.js",
+      "limit": "4 KB"
+    }
+  ],
+  "keywords": [
+    "japanese",
+    "numeral",
+    "kanji",
+    "vertical-writing",
+    "tategaki",
+    "tcy",
+    "縦書き",
+    "漢数字"
+  ],
+  "engines": {
+    "node": ">=16"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.0",
+    "@size-limit/preset-small-lib": "^11.0.0",
+    "happy-dom": "^15.0.0",
+    "size-limit": "^11.0.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.6.0",
+    "vitest": "^2.0.0"
+  }
+}
