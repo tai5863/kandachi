@@ -19,12 +19,13 @@
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
 
     :root {
       --color-bg: #faf9f7;
       --color-surface: #ffffff;
       --color-text: #1a1a1a;
-      --color-text-muted: #6b6b6b;
+      --color-text-muted: #595959;
       --color-accent: #2d2d2d;
       --color-border: #e5e2de;
       --color-tag-bg: #f0eeeb;
@@ -296,10 +297,10 @@
     }
     footer a {
       color: var(--color-text);
-      text-decoration: none;
-      border-bottom: 1px solid var(--color-border);
+      text-decoration: underline;
+      text-underline-offset: 0.2em;
     }
-    footer a:hover { border-color: var(--color-text); }
+    footer a:hover { text-decoration-color: var(--color-text); }
 
     @media (max-width: 768px) {
       .hero { padding: 3rem 1.5rem 2rem; }
@@ -319,10 +320,10 @@
   <header class="hero">
     <h1>kandachi</h1>
     <p>Vertical Japanese numeral formatting</p>
-    <div class="hero-install">npm install kandachi</div>
+    <div class="hero-install" tabindex="0" role="button" aria-label="インストールコマンドをコピー: npm install kandachi">npm install kandachi</div>
   </header>
 
-  <div class="container">
+  <main class="container">
 
     <!-- Playground -->
     <section>
@@ -330,16 +331,17 @@
       <p class="subtitle">テキストを入力すると、リアルタイムで変換結果が表示されます</p>
       <div class="playground">
         <div class="playground-input">
+          <label for="pg-input" class="sr-only">変換するテキスト</label>
           <textarea id="pg-input">令和8年3月20日、第42回全国大会が開催される。参加費は12500円、参加者は1500人を超えた。</textarea>
           <div class="playground-controls">
-            <button class="mode-btn active" data-mode="standard">standard</button>
-            <button class="mode-btn" data-mode="positional">positional</button>
-            <button class="mode-btn" data-mode="formal">formal</button>
-            <button class="mode-btn" data-mode="simple">simple</button>
-            <button class="mode-btn" data-mode="tcy">tcy</button>
+            <button class="mode-btn active" data-mode="standard" aria-pressed="true">standard</button>
+            <button class="mode-btn" data-mode="positional" aria-pressed="false">positional</button>
+            <button class="mode-btn" data-mode="formal" aria-pressed="false">formal</button>
+            <button class="mode-btn" data-mode="simple" aria-pressed="false">simple</button>
+            <button class="mode-btn" data-mode="tcy" aria-pressed="false">tcy</button>
           </div>
         </div>
-        <div class="playground-output" id="pg-output"></div>
+        <div class="playground-output" id="pg-output" role="status" aria-live="polite" aria-label="変換結果"></div>
       </div>
     </section>
 
@@ -456,7 +458,7 @@
         </div>
       </div>
       <div class="budoux-code">
-        <pre><code>import { format } from 'kandachi';
+        <pre tabindex="0"><code>import { format } from 'kandachi';
 import { loadDefaultJapaneseParser } from 'budoux';
 
 const parser = loadDefaultJapaneseParser();
@@ -466,7 +468,7 @@ const html = parser.translateHTMLString(text);
       </div>
     </section>
 
-  </div>
+  </main>
 
   <footer>
     <a href="https://github.com/tai5863/kandachi">GitHub</a> ・ <a href="https://www.npmjs.com/package/kandachi">npm</a> ・ MIT License
@@ -505,8 +507,12 @@ const html = parser.translateHTMLString(text);
 
     buttons.forEach(btn => {
       btn.addEventListener('click', () => {
-        buttons.forEach(b => b.classList.remove('active'));
+        buttons.forEach(b => {
+          b.classList.remove('active');
+          b.setAttribute('aria-pressed', 'false');
+        });
         btn.classList.add('active');
+        btn.setAttribute('aria-pressed', 'true');
         currentMode = btn.dataset.mode;
         update();
       });
