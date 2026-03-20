@@ -1,6 +1,6 @@
-# kandachi (漢立ち)
+# kandachi
 
-Vertical Japanese numeral formatting — 縦書き日本語数字フォーマッティング
+Vertical Japanese numeral formatting
 
 Arabic numerals to Kanji numerals, with TCY (tate-chu-yoko) and HTML support.
 
