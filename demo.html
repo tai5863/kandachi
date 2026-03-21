@@ -309,7 +309,43 @@
       .playground { grid-template-columns: 1fr; }
       .mode-grid { grid-template-columns: 1fr 1fr; }
       .usecases { grid-template-columns: 1fr; }
-      .panel-row { flex-wrap: wrap; }
+      .panel-row {
+        justify-content: flex-start;
+        flex-wrap: nowrap;
+        gap: 1rem;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+      }
+      .panel-row::-webkit-scrollbar { display: none; }
+      .panel-col {
+        flex: 0 0 85%;
+        scroll-snap-align: center;
+      }
+      .panel-col:first-child { margin-left: 7.5%; }
+      .panel-col:last-child { margin-right: 7.5%; }
+      .vertical-panel { margin: 0 auto; }
+      .slider-dots {
+        display: flex;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-top: 0.75rem;
+        margin-bottom: 1.5rem;
+      }
+      .slider-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--color-border);
+        border: none;
+        padding: 0;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      .slider-dot.active {
+        background: var(--color-accent);
+      }
     }
   </style>
   <script type="module" src="./dist/webcomponent.js"></script>
@@ -532,5 +568,46 @@ const html = parser.translateHTMLString(text);
       // Keep kandachi-only output as fallback
     });
   </script>
+
+  <script>
+    // Dot indicators for mobile slider
+    if (matchMedia('(max-width: 768px)').matches) {
+      document.querySelectorAll('.panel-row').forEach(row => {
+        const cols = [...row.querySelectorAll(':scope > .panel-col')];
+        if (cols.length <= 1) return;
+
+        const dots = document.createElement('div');
+        dots.className = 'slider-dots';
+        cols.forEach((_, i) => {
+          const d = document.createElement('button');
+          d.className = 'slider-dot' + (i === 0 ? ' active' : '');
+          d.setAttribute('aria-label', cols[i].querySelector('.panel-label')?.textContent ?? `Panel ${i + 1}`);
+          d.addEventListener('click', () => cols[i].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' }));
+          dots.appendChild(d);
+        });
+        row.after(dots);
+
+        // Update dots on scroll
+        let ticking = false;
+        row.addEventListener('scroll', () => {
+          if (ticking) return;
+          ticking = true;
+          requestAnimationFrame(() => {
+            const center = row.scrollLeft + row.clientWidth / 2;
+            let closest = 0;
+            let minDist = Infinity;
+            cols.forEach((col, i) => {
+              const colCenter = col.offsetLeft + col.offsetWidth / 2;
+              const dist = Math.abs(colCenter - center);
+              if (dist < minDist) { minDist = dist; closest = i; }
+            });
+            dots.querySelectorAll('.slider-dot').forEach((d, i) => d.classList.toggle('active', i === closest));
+            ticking = false;
+          });
+        }, { passive: true });
+      });
+    }
+  </script>
+
 </body>
 </html>
